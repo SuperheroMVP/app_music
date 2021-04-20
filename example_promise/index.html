@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script type="text/javascript">
+        
+        var users = [
+            {
+                id:1,
+                name:'User 01',
+            },
+            {
+                id:2,
+                name:'User 02',
+            },
+            {
+                id:3,
+                name:'User 03',
+            }
+        ];
+
+        var comments = [
+            {
+                id:1,
+                id_user:2,
+                content:'Learn frontend f8',
+            },
+            {
+            id:2,
+                id:1,
+                id_user:1,
+                content:'Learn javascript f8',
+            },
+            {
+                id:1,
+                id_user:3,
+                content:'Learn node js f8',
+            }
+        ];
+
+        function getComments()
+        {
+            return new Promise(function(resolve){
+                setTimeout(function(){
+                    resolve(comments);
+                },1000);
+            })
+        }
+
+        getComments().then(function(comments){
+            //console.log(comments);
+            var useIds = comments.map(function(comments){
+                return comments.id_user;
+            })
+
+            console.log(useIds)
+        });
+
+        function getUsersByIds(useIds)
+        {
+            return new Promise(function(resolve){
+                setTimeout(function(){
+                    
+                    var result = users.filter(function(){
+                        return useIds.includes(user.id);
+                    });
+
+                    resolve(result);
+
+                },1000);
+            })
+        }
+
+    </script>
+</body>
+</html>
