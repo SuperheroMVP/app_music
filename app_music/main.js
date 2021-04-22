@@ -8,11 +8,15 @@ const cdThumb = $('.cd-thumb');
 const audio = $('#audio');
 const playBtn = $('.btn-toggle-play');
 const player = $('.player');
-
+const progress = $('#progress');
+const nextBtn = $('.btn-next');
+const prevBtn = $('.btn-prev');
+const randomBtn = $('.btn-random');
 const app = {
      
     currentIndex : 0,
     isPlaying :false,
+    isRandom:false,
     songs: [
       {
         name: "Click Pow Get Down",
@@ -103,6 +107,16 @@ const app = {
     handleEvents:function(){        
       const _this = this;   //dung kieu cu lay app . <=> _this = app
       const cdWidth = cd.offsetWidth;
+
+      //xu li CD quay/ dung.
+      const cdThumbAnimate = cdThumb.animate( //(selector).animate({styles},{options})
+        {transform:'rotate(360deg)'},
+        {
+          duration:10000, //10s
+          interations:Infinity // loop vo han
+        }
+      )
+      cdThumbAnimate.pause();
       document.onscroll = function()
       {
         //onsole.log(window.scrollY);
@@ -131,6 +145,7 @@ const app = {
       audio.onplay = function(){
         _this.isPlaying = true;
         player.classList.add('playing');
+        cdThumbAnimate.play();
       }
 
       //Xu li khi pause
@@ -138,21 +153,72 @@ const app = {
       {
         _this.isPlaying = false;
         player.classList.remove('playing');
+        cdThumbAnimate.pause();
       }
 
       //Khi tien do bai hat thay doi
       audio.ontimeupdate = function()
       {
-        console.log(Math.random());
+        //console.log(audio.currentTime);//tra ve so giay cua video
+        //console.log(audio.duration);//tra ve tong thoi gian cua bai hat tinh theo giay. Lan dau tra ve NaN
+        if(audio.duration)//Check k phai NaN
+        {
+          const progressPersent = Math.floor(audio.currentTime / audio.duration * 100 );
+          progress.value = progressPersent;
+        }
+
       }
+
+      //xu li khi tua bai hat
+      progress.onchange = function(e)
+      {
+        const seekTime = (audio.duration / 100) * e.target.value;
+        audio.currentTime = seekTime;
+        
+      }
+
+      //Khi next bai hat
+      nextBtn.onclick = function()
+      {
+        _this.nextSong();
+        audio.play();
+      }
+      //Khi prev bai hat
+      prevBtn.onclick = function()
+      {
+        _this.prevSong();
+        audio.play();
+      }
+      // random bai hat
+      randomBtn.onclick = function()
+      {
+        _this.isRandom =  !_this.isRandom;
+         this.classList.toggle('active',!this.isRandom); //true thi add , false thi remove
+      },
      
-    },
+    },// end handleEvents
     loadCurrentSong:function(){
 
        // heading.textContent = app.currentSong.name;
        heading.textContent = this.currentSong.name;
        cdThumb.style.backgroundImage = `url('${this.currentSong.image}')`;
        audio.src = this.currentSong.path;
+    },
+    nextSong: function(){
+      this.currentIndex ++;//app.currentIndex++;
+      if(this.currentIndex >= this.songs.length)
+      {
+        this.currentIndex = 0;
+      }
+      this.loadCurrentSong();
+    },
+    prevSong: function(){
+      this.currentIndex --;//app.currentIndex --;
+      if(this.currentIndex < 0)
+      {
+        this.currentIndex = this.songs.length -1;
+      }
+      this.loadCurrentSong();
     },
     start:function(){
       //dinh nghia cac thuoc tin cho obj
