@@ -194,7 +194,7 @@ const app = {
       {
         _this.isRandom =  !_this.isRandom;
          this.classList.toggle('active',!this.isRandom); //true thi add , false thi remove
-      },
+      }
      
     },// end handleEvents
     loadCurrentSong:function(){
