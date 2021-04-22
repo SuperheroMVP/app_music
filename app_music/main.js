@@ -2,6 +2,9 @@
 const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
 
+const PLAYER_STORAGE_KEY = 'F8_PLAYER';
+
+
 const cd = $('.cd');
 const heading = $('header h2');
 const cdThumb = $('.cd-thumb');
@@ -13,6 +16,7 @@ const nextBtn = $('.btn-next');
 const prevBtn = $('.btn-prev');
 const randomBtn = $('.btn-random');
 const btnRepeat = $('.btn-repeat');
+const playlist = $('.playlist');
 
 const app = {
      
@@ -20,6 +24,12 @@ const app = {
     isPlaying :false,
     isRandom:false,
     isRepeat:false,
+    config: JSON.parse(localStorage.getItem(PLAYER_STORAGE_KEY)) || {},//parse:tu json - > javascript types
+                                                                       //Lay ra thi tra ve array object
+    setConfig:function(key,value){
+      this.config[key] =  value;
+      localStorage.setItem(PLAYER_STORAGE_KEY , JSON.stringify(this.config));//luu vao thi ma hoa sang string
+    },
     songs: [
       {
         name: "Click Pow Get Down",
@@ -89,7 +99,7 @@ const app = {
     render:function(){
       const htmls = this.songs.map((song,index)=>{
         return `
-            <div class="song ${index === this.currentIndex ? 'active': ''}">
+            <div class="song ${index === this.currentIndex ? 'active': ''}" data-index=${index}>
               <div class="thumb"
                 style="background-image: url('${song.image}')">
               </div>
@@ -104,7 +114,7 @@ const app = {
          `
       })
       
-      $('.playlist').innerHTML = htmls.join('');// array to string
+      playlist.innerHTML = htmls.join('');// array to string
 
     },
     handleEvents:function(){        
@@ -218,6 +228,7 @@ const app = {
       randomBtn.onclick = function()
       {
         _this.isRandom =  !_this.isRandom;
+        _this.setConfig('isRandom',_this.isRandom);
          this.classList.toggle('active',_this.isRandom); //true thi add , false thi remove
       }
 
@@ -233,14 +244,45 @@ const app = {
         }
       }
 
+      //Lang nghe hanh vi click vao play list
+      playlist.onclick = function(e)
+      {
+       // console.log(e.target.closest('.song:not(.active)')) // tra ve chinh emlement hoac la element cha, khong co tra ve Null
+       //Xu li khi click vao song
+        const songNode = e.target.closest('.song:not(.active)');
+        if(songNode || e.target.closest('.option'))
+        {
+          if(songNode)
+          {
+            //console.log(songNode.getAttribute('data-index'));
+           // console.log(songNode.dataset.index);
+           _this.currentIndex = Number(songNode.dataset.index);
+           _this.loadCurrentSong();
+           _this.render();
+           audio.play();
+          }
+        }
+        //Xu li khi click vao song option
+        if(e.target.closest('.option'))
+        {
+          console.log('click option')
+        }
+      }
+
       // xu li lap lai bai hat
       btnRepeat.onclick =  function()
       {
-        _this.isRepeat = !this.isRepeat;
+        _this.isRepeat = !_this.isRepeat;
+        _this.setConfig('isRepeat',_this.isRepeat);
         this.classList.toggle('active',_this.isRepeat);//true thi add , false thi remove
       }
      
     },// end handleEvents
+    loadConfig:function()
+    {
+      this.isRandom = this.config.isRandom;
+      this.isRepeat = this.config.isRepeat;
+    },
     loadCurrentSong:function(){
 
        // heading.textContent = app.currentSong.name;
@@ -285,6 +327,10 @@ const app = {
       },300);
     },
     start:function(){
+
+      //Gan cau hinh tu config vao ung dung
+      this.loadConfig();
+
       //dinh nghia cac thuoc tin cho obj
       this.defineProperties();
 
@@ -296,6 +342,10 @@ const app = {
 
       // render playlist
       this.render();
+
+      //hien thi trang thai ban dau cua button repeat va random
+      btnRepeat.classList.toggle('active',this.isRepeat);
+      randomBtn.classList.toggle('active',this.isRandom); 
     } 
 }
 app.start();// lam nhu the nay thi chuong trinh se chi co 1  app.start();
