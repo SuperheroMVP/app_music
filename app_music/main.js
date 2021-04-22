@@ -12,11 +12,14 @@ const progress = $('#progress');
 const nextBtn = $('.btn-next');
 const prevBtn = $('.btn-prev');
 const randomBtn = $('.btn-random');
+const btnRepeat = $('.btn-repeat');
+
 const app = {
      
     currentIndex : 0,
     isPlaying :false,
     isRandom:false,
+    isRepeat:false,
     songs: [
       {
         name: "Click Pow Get Down",
@@ -84,9 +87,9 @@ const app = {
       })
     },
     render:function(){
-      const htmls = this.songs.map((song)=>{
+      const htmls = this.songs.map((song,index)=>{
         return `
-            <div class="song">
+            <div class="song ${index === this.currentIndex ? 'active': ''}">
               <div class="thumb"
                 style="background-image: url('${song.image}')">
               </div>
@@ -180,20 +183,61 @@ const app = {
       //Khi next bai hat
       nextBtn.onclick = function()
       {
-        _this.nextSong();
+        if(_this.isRandom)
+        {
+          _this.playRandomSong();
+        }
+        else
+        {
+          _this.nextSong();
+        }
+
         audio.play();
+
+        _this.render();// render lai active class active
+        _this.scrollToActiveSong();
       }
       //Khi prev bai hat
       prevBtn.onclick = function()
       {
+        if(_this.isRandom)
+        {
+          _this.playRandomSong();
+        }
+        else
+        {
         _this.prevSong();
+        }
         audio.play();
+
+        _this.render();// render lai active class active
+        _this.scrollToActiveSong();
+
       }
       // random bai hat
       randomBtn.onclick = function()
       {
         _this.isRandom =  !_this.isRandom;
-         this.classList.toggle('active',!this.isRandom); //true thi add , false thi remove
+         this.classList.toggle('active',_this.isRandom); //true thi add , false thi remove
+      }
+
+      // next song khi onded
+      audio.onended = function()
+      {
+       
+        if(this.isRepeat){
+            audio.play();
+        }
+        else{
+          nextBtn.click();
+        }
+      }
+
+      // xu li lap lai bai hat
+      btnRepeat.onclick =  function()
+      {
+        _this.isRepeat = !this.isRepeat;
+        this.classList.toggle('active',_this.isRepeat);//true thi add , false thi remove
       }
      
     },// end handleEvents
@@ -219,6 +263,26 @@ const app = {
         this.currentIndex = this.songs.length -1;
       }
       this.loadCurrentSong();
+    },
+    playRandomSong:function()
+    {
+      //Random thi tru thang hien tai ra
+      let newIndex;
+      do{
+          newIndex = Math.floor(Math.random() * app.songs.length);
+      }while(newIndex  === this.currentIndex);// bang chinh index hien tai thi vong lap se chay tiep
+
+      this.currentIndex = newIndex;
+      this.loadCurrentSong();
+    },
+    scrollToActiveSong()
+    {
+      setTimeout(()=>{
+        $('.song.active').scrollIntoView({
+          behavior:'smooth',
+          block:'nearest'
+        });
+      },300);
     },
     start:function(){
       //dinh nghia cac thuoc tin cho obj
