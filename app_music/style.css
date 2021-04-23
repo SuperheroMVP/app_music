@@ -130,7 +130,7 @@
   
   /* PLAYLIST */
   .playlist {
-    margin-top: 408px;
+    margin-top: 440px;
     padding: 12px;
   }
   
@@ -187,3 +187,8 @@
     font-size: 18px;
   }
   
+  .current-time span,
+  .duration-time  span{
+    font-size: 13px;
+    margin: 0px 8px;
+  }
