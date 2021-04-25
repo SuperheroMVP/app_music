@@ -23,10 +23,12 @@ const cdThumb = $('.cd-thumb');
 const audio = $('#audio');
 const playBtn = $('.btn-toggle-play');
 const progress = $('#progress');
+const volume = $('#volume');
 const nextBtn = $('.btn-next');
 const prevBtn = $('.btn-prev');
 const randomBtn = $('.btn-random');
 const repeatBtn = $('.btn-repeat');
+const currentAudioTime = $('.current-time');
 
 const app = {
     currentIndex : 0,
@@ -189,6 +191,7 @@ const app = {
             _this.isPlaying = true;
             player.classList.add('playing');
             cdThumbAnimate.play();
+           
         }
         // Khi bài hát được Pause
         audio.onpause = function() {
@@ -211,6 +214,20 @@ const app = {
             audio.currentTime = seekTime;
 
             checkOnmouseAndTouch = true;
+        }
+        // Khi tang giam volume
+        volume.onchange = function(e) {
+            const currentVolume = e.target.value / 100;
+            audio.volume = currentVolume;
+            if(currentVolume >0)
+            {
+                player.classList.remove('volume-control');
+            }
+            else
+            {
+                player.classList.add('volume-control');
+            }
+
         }
         
         // Khi tiến độ bài hát thay đổi
