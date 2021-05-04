@@ -37,7 +37,7 @@ const app = {
     isRandom: false,
     isRepeat: false,
     listRandomSongs: [],
-    config: JSON.parse(localStorage.getItem(PlAYER_STORAGE_KEY)) || {},
+    config: JSON.parse(localStorage.getItem(PlAYER_STORAGE_KEY)) || {}, //parse:tu json - > javascript types.Lay ra thi tra ve array object
     setConfig (key, value) {
         this.config[key] = value;
         localStorage.setItem(PlAYER_STORAGE_KEY,JSON.stringify(this.config));
@@ -133,19 +133,19 @@ const app = {
        var htmls = this.songs.map((song, index) => {
             return `
                     <div data-index = ${index} class="song ${index === this.currentIndex ? 'active' : ''}">
-                    <div class="thumb" style="background-image: url('${song.image}')">
-                    </div>
-                    <div class="body">
-                    <h3 class="title">${song.name}</h3>
-                    <p class="author">${song.singer}</p>
-                    </div>
-                    <div class="option">
-                    <i class="fas fa-ellipsis-h"></i>
-                    </div>
+                        <div class="thumb" style="background-image: url('${song.image}')">
+                        </div>
+                        <div class="body">
+                        <h3 class="title">${song.name}</h3>
+                        <p class="author">${song.singer}</p>
+                        </div>
+                        <div class="option">
+                        <i class="fas fa-ellipsis-h"></i>
+                        </div>
                     </div>
                     `;
         })
-        playList.innerHTML = htmls.join('');
+        playList.innerHTML = htmls.join('');// array to string
     },
 
     defineProperties() {
