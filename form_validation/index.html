@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form validation</title>
+    <title>Validation form</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -47,7 +47,23 @@
         </form>
 
     </div>
-    <script src="main.js"></script>
+    <script src="validator.js"></script>
+    <script>
+        Validator({
+            form:'#form-1',
+            errorSelector:'.form-message',
+            rules:[
+                Validator.isRequired('#fullname'),
+                Validator.isRequired('#email'),
+                Validator.isEmail('#email'),
+                Validator.minLength('#password',6),
+                Validator.isRequired('#password_confirmation'),
+                Validator.isConfirmed('#password_confirmation' , function(){
+                    return document.querySelector('#form-1 #password').value;
+                },'Nhap lai mat khau khong chinh xac'),
+            ]
+        });
+    </script>
 </body>
 
 </html>
